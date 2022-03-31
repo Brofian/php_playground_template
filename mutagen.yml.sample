@@ -1,0 +1,24 @@
+sync:
+  defaults:
+    mode: two-way-resolved
+    symlink:
+      mode: portable
+    watch:
+      pollingInterval: 2
+    ignore:
+      paths:
+# Just in case we would need these, because they occur most of the time
+#        - /var/cache
+#        - /public/media
+      vcs: false
+  phpPlaygroundSync:
+    alpha: "./www"
+    beta: "docker://php_playground_template_fpm_1/var/www/html"
+    maxStagingFileSize: "1 GB"
+    configurationBeta:
+      stageMode: "neighboring"
+      permissions:
+        defaultOwner: "www-data"
+        defaultGroup: "www-data"
+        defaultFileMode: "0644"
+        defaultDirectoryMode: "0755"

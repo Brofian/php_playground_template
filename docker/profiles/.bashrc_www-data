@@ -1,0 +1,8 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# You may uncomment the following lines if you want `ls' to be colorized:
+export LS_OPTIONS='--color=auto -lah'
+eval "`dircolors -b`"
+alias ls='ls $LS_OPTIONS'
+
+# Initialize ssh agent - uncomment if you want to use your ssh keys
+# { eval `ssh-agent`; ssh-add; } &>/dev/null

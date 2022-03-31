@@ -1,0 +1,10 @@
+#IDE Folders
+.idea
+*~
+
+# project configuration files
+.env
+db.env
+mutagen.yml
+mutagen.yml.lock
+docker-compose.yml

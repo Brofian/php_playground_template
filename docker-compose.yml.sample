@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Mount these folders into the docker container (we use the filenames instead of a whole directory to prevent getting data from docker into the project)
+      - ./docker/web/nginx/template.conf:/etc/nginx/sites-enabled/template.conf
+      - ./docker/web/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./docker/web/nginx/certs/:/etc/nginx/certs
+      # Mount the base path for every container, so it is always in sync between containers
+      - project:${SYNC_DESTINATION_PATH}:delegated
+    env_file:
+      - ./.env
+
+  fpm:
+    # image: php:8.0-fpm # use this line instead of the build part for a static default php image
+    build:
+      context: .
+      dockerfile: PHP.Dockerfile
+    volumes:
+      # Project files
+      - project:${SYNC_DESTINATION_PATH}:delegated
+      # bash profile files
+      - ./docker/profiles/.bashrc_root:/root/.bashrc:ro
+      - ./docker/profiles/.profile_www-data:/var/www/.profile:ro
+      - ./docker/profiles/.bashrc_www-data:/var/www/.bashrc:ro
+      - ./docker/scripts:/var/www/share
+    env_file:
+      - ./.env
+
+  db:
+    image: mariadb:latest
+    ports:
+      - ${EXTERNAL_DB_PORT}:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+    env_file:
+      - ./db.env
+
+
+
+volumes:
+  project:
+  dbdata:
