@@ -28,7 +28,9 @@ services:
       - ./docker/profiles/.bashrc_root:/root/.bashrc:ro
       - ./docker/profiles/.profile_www-data:/var/www/.profile:ro
       - ./docker/profiles/.bashrc_www-data:/var/www/.bashrc:ro
-      - ./docker/scripts:/var/www/share
+      # This project is currently only configured for windows to sync data from the .ssh and the .composer folder in your user directory to the containers
+      - ~/.ssh:/var/windows/ssh:ro
+      - ~/.composer:/var/windows/composer:ro
     env_file:
       - ./.env
 

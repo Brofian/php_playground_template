@@ -11,18 +11,24 @@ alias cp='cp -i'
 alias mv='mv -i'
 
 
+WEB_USER_HOME=$(getent passwd "www-data" | cut -d: -f6)
+
 # Copy ssh info from host and set correct permissions
 mkdir -p $WEB_USER_HOME/.ssh
-cp -n /var/windows/ssh/id_rsa $WEB_USER_HOME/.ssh/id_rsa
-cp -n /var/windows/ssh/known_hosts $WEB_USER_HOME/.ssh/known_hosts
-chown -fR $WEB_USER:$WEB_USER $WEB_USER_HOME/.ssh
-chmod -f 0600 $WEB_USER_HOME/.ssh/id_rsa
+if [[ -f "/var/windows/ssh/id_rsa" ]]; then
+    mkdir -p $WEB_USER_HOME/.ssh
+    cp -n /var/windows/ssh/id_rsa $WEB_USER_HOME/.ssh/id_rsa
+    cp -n /var/windows/ssh/known_hosts $WEB_USER_HOME/.ssh/known_hosts
+    chown -fR $WEB_USER:$WEB_USER $WEB_USER_HOME/.ssh
+    chmod -f 0600 $WEB_USER_HOME/.ssh/id_rsa
+fi
+
 
 # Copy composer info from host and set correct permissions
 mkdir -p $WEB_USER_HOME/.composer
 if [[ -f "/var/www/html/auth.json" ]]; then
     cp -u /var/www/html/auth.json $WEB_USER_HOME/.composer/auth.json
-else
+elif [[ -f "/var/windows/composer/auth.json" ]]; then
     cp -n /var/windows/composer/auth.json $WEB_USER_HOME/.composer/auth.json
 fi
 #chown -fR $WEB_USER:$WEB_USER $WEB_USER_HOME/.composer
@@ -35,3 +41,6 @@ chown $WEB_USER:$WEB_USER /var/www/html
 # composer -q global remove hirak/prestissimo
 # composer -q config -g repos.packagist composer https://repo.packagist.org
 # composer -q self-update --2
+
+# Su to www-data to make that shizzle usable
+su $WEB_USER -s /bin/bash
